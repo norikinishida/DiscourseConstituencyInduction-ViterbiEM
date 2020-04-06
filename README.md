@@ -1,6 +1,11 @@
 # Unsupervised Discourse Constituency Parsing Using Viterbi EM
 
-Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, to appear).
+
+- Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, to appear).
+
+- Task: Unsupervised discourse constituency parsing based on Rhetorical Structure Theory
+    - Input: EDUs + syntactic features (i.e., POS tags, dependency graphs)
+    - Output: Text-level unlabeled tree
 
 ## Requirements ##
 
@@ -14,33 +19,6 @@ Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsin
 - https://github.com/norikinishida/utils.git
 - https://github.com/norikinishida/treetk.git
 - https://github.com/norikinishida/textpreprocessor.git
-
-## Task ##
-
-- Unsupervised discourse constituency parsing based on Rhetorical Structure Theory
-    - Input: EDUs + syntactic features (i.e., POS tags, dependency graphs)
-    - Output: Text-level unlabeled tree
-
-## Parsing Model: Span-based Model ##
-
-- EDU-level feature extraction
-    - word embeddings of the beginning/end words
-    - POS embeddings of the beginning/end words
-    - word/POS/dependency embeddings of the head word
-
-- Span-level feature extraction
-    - bidirectional LSTM
-    - span differences
-    - no template features
-
-- Span scoring
-    - MLP for bracket scoring
-
-- Decoding algorithm (unlabeled tree-building)
-    - CKY
-
-- Labeling
-    - Relations (+ nuclearities) are "ELABORATION-NS" (i.e., majority label)
 
 ## Configuration ##
 
@@ -82,9 +60,30 @@ ptbwsj = "/path/to/LDC99T42/treebank_3/raw/wsj"
     - ./data/rstdt-vocab (vocabularies and class names)
     - ./data/ptbwsj_wo_rstdt (preprocessed data of PTB-WSJ)
 
+## Parsing Model: Span-based Model ##
+
+- EDU-level feature extraction
+    - word embeddings of the beginning/end words
+    - POS embeddings of the beginning/end words
+    - word/POS/dependency embeddings of the head word
+
+- Span-level feature extraction
+    - bidirectional LSTM
+    - span differences
+    - no template features
+
+- Span scoring
+    - MLP for bracket scoring
+
+- Decoding algorithm (unlabeled tree-building)
+    - CKY
+
+- Labeling
+    - Relations (+ nuclearities) are "ELABORATION-NS" (i.e., majority label)
+
 ## Training ##
 
-- Viterbi EM (i.e., self training)
+- Viterbi EM (i.e., self training) + initial-tree sampling based on prior knowledge
 - Loss function: Margin-based criterion
 - Training data: RST-DT training set
 - Run the following command:
