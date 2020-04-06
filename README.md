@@ -1,5 +1,7 @@
 # Unsupervised Discourse Constituency Parsing Using Viterbi EM
 
+Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, to appear).
+
 ## Requirements ##
 
 - numpy
