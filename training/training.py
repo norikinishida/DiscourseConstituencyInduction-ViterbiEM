@@ -2,7 +2,7 @@ import jsonlines
 import numpy as np
 import chainer
 import chainer.functions as F
-from chainer import cuda, serializers
+from chainer import cuda, optimizers, serializers
 import multiset
 
 import utils
@@ -59,7 +59,10 @@ def train(model,
     negative_tree_sampler = treesamplers.NegativeTreeSampler()
 
     # Optimizer preparation
-    opt = utils.get_optimizer(optimizer_name)
+    if optimizer_name == "adam":
+        opt = optimizers.Adam()
+    else:
+        raise ValueError("Invalid optimizer_name=%s" % optimizer_name)
     opt.setup(model)
     if weight_decay > 0.0:
         opt.add_hook(chainer.optimizer.WeightDecay(weight_decay))
