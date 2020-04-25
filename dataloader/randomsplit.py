@@ -2,16 +2,20 @@ import numpy as np
 
 import utils
 
-def randomsplit(n_dev, databatch):
+def randomsplit(n_dev, databatch, seed=None):
     """
     :type n_dev: int
     :type databatch: DataBatch
+    :type deed: int / None
     :rtype: DataBatch, DataBatch
     """
     n_total = len(databatch)
     assert 0 < n_dev < n_total
 
-    indices = np.random.RandomState(1234).randint(0,n_total,n_total)
+    if seed is None:
+        indices = np.random.permutation(n_total)
+    else:
+        indices = np.random.RandomState(seed).permutation(n_total)
     dev_indices = indices[:n_dev]
     train_indices = indices[n_dev:]
     assert len(train_indices) + len(dev_indices) == len(databatch)
