@@ -93,12 +93,12 @@ python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB
 ```
 
 - The following files will be generated:
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.training.log
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.training.jsonl
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.model
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.valid_pred.ctrees (optional)
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.valid_gold.ctrees (optional)
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.validation.jsonl (optional)
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.training.log
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.training.jsonl
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.model
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.valid_pred.ctrees (optional)
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.valid_gold.ctrees (optional)
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.validation.jsonl (optional)
 
 ## Evaluation ##
 
@@ -111,6 +111,6 @@ python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB
 ```
 
 - The following files will be generated:
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.evaluation.ctrees
-    - ./results/spanbasedmodel2.hyperparams_2.trial1.evaluation.json
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.evaluation.ctrees
+    - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.evaluation.json
 
