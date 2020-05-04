@@ -4,8 +4,8 @@
 - Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, 2020).
 
 - Task: Unsupervised discourse constituency parsing based on Rhetorical Structure Theory
-    - Input: EDUs + syntactic features (i.e., POS tags, dependency graphs) + sentence/paragraph boundaries
-    - Output: Text-level unlabeled tree
+    - Input: EDUs, syntactic features, sentence/paragraph boundaries
+    - Output: Unlabeled RST-style constituent tree
 
 ## Requirements ##
 
