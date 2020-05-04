@@ -1,10 +1,10 @@
 # Unsupervised Discourse Constituency Parsing Using Viterbi EM
 
 
-- Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, to appear).
+- Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, 2020).
 
 - Task: Unsupervised discourse constituency parsing based on Rhetorical Structure Theory
-    - Input: EDUs + syntactic features (i.e., POS tags, dependency graphs)
+    - Input: EDUs + syntactic features (i.e., POS tags, dependency graphs) + sentence/paragraph boundaries
     - Output: Text-level unlabeled tree
 
 ## Requirements ##
@@ -89,7 +89,7 @@ ptbwsj = "/path/to/LDC99T42/treebank_3/raw/wsj"
 - Run the following command:
 
 ```
-python main.py --gpu 0 --model spanbasedmodel2 --config ./config/hyperparams_2.ini --name trial1 --actiontype train --max_epoch 10
+python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB --config ./config/hyperparams_2.ini --name trial1 --actiontype train --max_epoch 10
 ```
 
 - The following files will be generated:
@@ -107,7 +107,7 @@ python main.py --gpu 0 --model spanbasedmodel2 --config ./config/hyperparams_2.i
 - Run the following command:
 
 ```
-python main.py --gpu 0 --model spanbasedmodel2 --config ./config/hyperparams_2.ini --name trial1 --actiontype evaluate
+python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB --config ./config/hyperparams_2.ini --name trial1 --actiontype evaluate
 ```
 
 - The following files will be generated:

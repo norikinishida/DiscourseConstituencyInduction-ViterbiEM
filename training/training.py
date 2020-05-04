@@ -10,8 +10,7 @@ import treetk
 
 import treesamplers
 import parsing
-import rst_parseval
-import old_rst_parseval
+import metrics
 
 def train(model,
           decoder,
@@ -81,10 +80,10 @@ def train(model,
                           decoder=decoder,
                           databatch=dev_databatch,
                           path_pred=path_pred)
-            scores = rst_parseval.evaluate(
+            scores = metrics.rst_parseval(
                         pred_path=path_pred,
                         gold_path=path_gold)
-            old_scores = old_rst_parseval.evaluate(
+            old_scores = metrics.old_rst_parseval(
                         pred_path=path_pred,
                         gold_path=path_gold)
             out = {
@@ -279,10 +278,10 @@ def train(model,
                               decoder=decoder,
                               databatch=dev_databatch,
                               path_pred=path_pred)
-                scores = rst_parseval.evaluate(
+                scores = metrics.rst_parseval(
                             pred_path=path_pred,
                             gold_path=path_gold)
-                old_scores = old_rst_parseval.evaluate(
+                old_scores = metrics.old_rst_parseval(
                             pred_path=path_pred,
                             gold_path=path_gold)
                 out = {

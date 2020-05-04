@@ -29,10 +29,8 @@ class IncrementalRandomCKYDecoder(object):
         if use_sbnds:
             target_bnds = sbnds
             sexps = self.apply_decoder(
-                                sexps=sexps,
                                 target_bnds=target_bnds,
-                                sbnds=sbnds,
-                                pbnds=pbnds,
+                                sexps=sexps,
                                 gold_spans=gold_spans)
 
         # Paragraph-level parsing
@@ -42,10 +40,8 @@ class IncrementalRandomCKYDecoder(object):
             else:
                 target_bnds = [(sbnds[b][0],sbnds[e][1]) for b,e in pbnds]
             sexps = self.apply_decoder(
-                                sexps=sexps,
                                 target_bnds=target_bnds,
-                                sbnds=sbnds,
-                                pbnds=pbnds,
+                                sexps=sexps,
                                 gold_spans=gold_spans)
 
         # Document-level parsing
@@ -55,16 +51,12 @@ class IncrementalRandomCKYDecoder(object):
         return sexp
 
     def apply_decoder(self,
-                     sexps,
                      target_bnds,
-                     sbnds,
-                     pbnds,
+                     sexps,
                      gold_spans=None):
         """
-        :type sexps: list of int/str
         :type target_bnds: list of (int, int)
-        :type sbnds: list of (int, int)
-        :type pbnds: list of (int, int)
+        :type sexps: list of int/str
         :type gold_spans: list of (int, int)
         :rtype: list of str
         """

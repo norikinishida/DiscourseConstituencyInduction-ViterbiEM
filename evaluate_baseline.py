@@ -12,8 +12,7 @@ import treetk
 
 import dataloader
 import treesamplers # NOTE
-import rst_parseval
-import old_rst_parseval
+import metrics
 
 def main(args):
 
@@ -83,10 +82,10 @@ def main(args):
         parse(sampler=sampler,
               databatch=test_databatch,
               path_pred=path_pred)
-        scores = rst_parseval.evaluate(
+        scores = metrics.rst_parseval(
                     pred_path=path_pred,
                     gold_path=os.path.join(config.getpath("data"), "rstdt", "renamed", "test.labeled.nary.ctrees"))
-        old_scores = old_rst_parseval.evaluate(
+        old_scores = metrics.old_rst_parseval(
                     pred_path=path_pred,
                     gold_path=os.path.join(config.getpath("data"), "rstdt", "renamed", "test.labeled.nary.ctrees"))
         out = {

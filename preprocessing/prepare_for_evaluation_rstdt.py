@@ -19,6 +19,13 @@ def main():
         for sexp in train_databatch.batch_bin_sexp:
             f.write("%s\n" % " ".join(sexp))
 
+    with open(os.path.join(config.getpath("data"), "rstdt", "renamed", "train.arcs"), "w") as f:
+        for arcs in train_databatch.batch_arcs:
+            arcs = ["%s-%s-%s" % (h,d,r) for (h,d,r) in arcs]
+            f.write("%s\n" % " ".join(arcs))
+
+    ######
+
     with open(os.path.join(config.getpath("data"), "rstdt", "renamed", "test.labeled.nary.ctrees"), "w") as f:
         for sexp in test_databatch.batch_nary_sexp:
             f.write("%s\n" % " ".join(sexp))
@@ -27,6 +34,13 @@ def main():
         for sexp in test_databatch.batch_bin_sexp:
             f.write("%s\n" % " ".join(sexp))
 
+    with open(os.path.join(config.getpath("data"), "rstdt", "renamed", "test.arcs"), "w") as f:
+        for arcs in test_databatch.batch_arcs:
+            arcs = ["%s-%s-%s" % (h,d,r) for (h,d,r) in arcs]
+            f.write("%s\n" % " ".join(arcs))
+
+    ######
+
     with open(os.path.join(config.getpath("data"), "rstdt", "renamed", "all.labeled.nary.ctrees"), "w") as f:
         for sexp in all_databatch.batch_nary_sexp:
             f.write("%s\n" % " ".join(sexp))
@@ -34,6 +48,11 @@ def main():
     with open(os.path.join(config.getpath("data"), "rstdt", "renamed", "all.labeled.bin.ctrees"), "w") as f:
         for sexp in all_databatch.batch_bin_sexp:
             f.write("%s\n" % " ".join(sexp))
+
+    with open(os.path.join(config.getpath("data"), "rstdt", "renamed", "all.arcs"), "w") as f:
+        for arcs in all_databatch.batch_arcs:
+            arcs = ["%s-%s-%s" % (h,d,r) for (h,d,r) in arcs]
+            f.write("%s\n" % " ".join(arcs))
 
 if __name__ == "__main__":
     main()

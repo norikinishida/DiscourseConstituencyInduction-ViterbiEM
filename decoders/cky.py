@@ -44,9 +44,9 @@ class IncrementalCKYDecoder(object):
         if use_sbnds:
             target_bnds = sbnds
             sexps = self.apply_decoder(
+                                target_bnds=target_bnds,
                                 model=model,
                                 sexps=sexps,
-                                target_bnds=target_bnds,
                                 edus=edus,
                                 edus_postag=edus_postag,
                                 sbnds=sbnds,
@@ -63,9 +63,9 @@ class IncrementalCKYDecoder(object):
             else:
                 target_bnds = [(sbnds[b][0],sbnds[e][1]) for b,e in pbnds]
             sexps = self.apply_decoder(
+                                target_bnds=target_bnds,
                                 model=model,
                                 sexps=sexps,
-                                target_bnds=target_bnds,
                                 edus=edus,
                                 edus_postag=edus_postag,
                                 sbnds=sbnds,
@@ -90,9 +90,9 @@ class IncrementalCKYDecoder(object):
         return sexp
 
     def apply_decoder(self,
+                     target_bnds,
                      model,
                      sexps,
-                     target_bnds,
                      edus,
                      edus_postag,
                      sbnds,
@@ -102,9 +102,9 @@ class IncrementalCKYDecoder(object):
                      mask_fwd,
                      gold_spans=None):
         """
+        :type target_bnds: list of (int, int)
         :type model: Model
         :type sexps: list of int/str
-        :type target_bnds: list of (int, int)
         :type edus: list of list of str
         :type edus_postag: list of list of str
         :type sbnds: list of (int, int)

@@ -53,7 +53,7 @@ class TemplateFeatureExtractor(TemplateFeatureExtractor):
             for span in spans:
                 b, e, l = span
                 # Extract N-grams from a span
-                part_ngrams_span_begin = self.extract_ngrams(edus[b], position="begin") # list of strj:jw
+                part_ngrams_span_begin = self.extract_ngrams(edus[b], position="begin") # list of str
                 part_ngrams_span_end = self.extract_ngrams(edus[e], position="end")
                 ngrams_span_begin.extend(part_ngrams_span_begin)
                 ngrams_span_end.extend(part_ngrams_span_end)
