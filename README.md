@@ -16,9 +16,6 @@
 - pyprind
 - [Stanford Tokenizer](https://nlp.stanford.edu/static/software/tokenizer.shtml)
 - [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/index.html)
-- https://github.com/norikinishida/utils.git
-- https://github.com/norikinishida/treetk.git
-- https://github.com/norikinishida/textpreprocessor.git
 
 ## Configuration ##
 
@@ -45,6 +42,23 @@ results = "./results"
 pretrained_word_embeddings = "/path/to/your/pretrained_word_embeddings"
 rstdt = "/path/to/rst_discourse_treebank/data/RSTtrees-WSJ-main-1.0"
 ptbwsj = "/path/to/LDC99T42/treebank_3/raw/wsj"
+```
+
+4. Clone other libraries
+
+```
+$ mkdir ./tmp
+$ cd ./tmp
+$ pip install pandas
+$ pip install scikit-learn
+$ pip install gensim
+$ pip install nltk
+$ git clone https://github.com/norikinishida/utils.git
+$ git clone https://github.com/norikinishida/treetk.git
+$ git clone https://github.com/norikinishida/textpreprocessor.git
+$ cp -r ./utils/utils ..
+$ cp -r ./treetk/treetk ..
+$ cp -r ./textpreprocessor/textpreprocessor ..
 ```
 
 ## Preprocessing ##
