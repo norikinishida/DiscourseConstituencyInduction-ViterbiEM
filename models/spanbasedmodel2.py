@@ -31,8 +31,8 @@ class SpanBasedModel2(chainer.Chain):
         :type mlp_dim: int
         :type initialW: numpy.ndarray(shape=(|V|, word_dim), dtype=np.float32)
         """
-        assert "<UNK>" in vocab_word
-        assert "<UNK>" in vocab_deprel
+        assert "<unk>" in vocab_word
+        assert "<unk>" in vocab_deprel
 
         self.vocab_word = vocab_word
         self.vocab_postag = vocab_postag
@@ -50,8 +50,8 @@ class SpanBasedModel2(chainer.Chain):
         # MLP
         self.mlp_dim = mlp_dim
 
-        self.unk_word_id = self.vocab_word["<UNK>"]
-        self.unk_deprel_id = self.vocab_deprel["<UNK>"]
+        self.unk_word_id = self.vocab_word["<unk>"]
+        self.unk_deprel_id = self.vocab_deprel["<unk>"]
         self.START_ID = np.asarray([0], dtype=np.int32) # (1,)
         self.STOP_ID = np.asarray([1], dtype=np.int32) # (1,)
 

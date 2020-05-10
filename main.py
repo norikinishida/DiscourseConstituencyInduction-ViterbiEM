@@ -260,10 +260,10 @@ def main(args):
                           path_pred=path_pred)
             scores = metrics.rst_parseval(
                         pred_path=path_pred,
-                        gold_path=os.path.join(config.getpath("data"), "rstdt", "renamed", "test.labeled.nary.ctrees"))
+                        gold_path=os.path.join(config.getpath("data"), "rstdt", "wsj", "test", "gold.labeled.nary.ctrees"))
             old_scores = metrics.old_rst_parseval(
                         pred_path=path_pred,
-                        gold_path=os.path.join(config.getpath("data"), "rstdt", "renamed", "test.labeled.nary.ctrees"))
+                        gold_path=os.path.join(config.getpath("data"), "rstdt", "wsj", "test", "gold.labeled.nary.ctrees"))
             out = {
                     "Morey2018": {
                         "Unlabeled Precision": scores["S"]["Precision"] * 100.0,

@@ -17,7 +17,7 @@ def read_rstdt(split, relation_level, with_root=False):
 
     config = utils.Config()
 
-    path_root = os.path.join(config.getpath("data"), "rstdt", "renamed")
+    path_root = os.path.join(config.getpath("data"), "rstdt", "wsj", split)
 
     if relation_level == "coarse-grained":
         relation_mapper = treetk.rstdt.RelationMapper()
@@ -32,43 +32,52 @@ def read_rstdt(split, relation_level, with_root=False):
     batch_nary_sexp = []
     batch_bin_sexp = []
     batch_arcs = []
-    filenames = os.listdir(os.path.join(config.getpath("data"), "rstdt", "renamed"))
-    filenames = [n for n in filenames if n.startswith("%s." % split) and n.endswith(".edus")]
+
+    filenames = os.listdir(path_root)
+    filenames = [n for n in filenames if n.endswith(".edus.tokens")]
     filenames.sort()
+
     for filename in filenames:
         # Path
         path_edus = os.path.join(path_root, filename + ".preprocessed")
-        path_edus_postag = os.path.join(path_root, filename + ".postags")
-        path_edus_head = os.path.join(path_root, filename + ".heads")
-        path_sbnds = os.path.join(path_root, filename.replace(".edus", ".sentence.proj.boundaries"))
-        path_pbnds = os.path.join(path_root, filename.replace(".edus", ".paragraph.boundaries"))
-        path_nary_sexp = os.path.join(path_root, filename.replace(".edus", ".labeled.nary.ctree"))
-        path_bin_sexp = os.path.join(path_root, filename.replace(".edus", ".labeled.bin.ctree"))
-        path_arcs = os.path.join(path_root, filename.replace(".edus", ".arcs"))
+        path_edus_postag = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.postags"))
+        path_edus_head = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.heads"))
+        path_sbnds = os.path.join(path_root, filename.replace(".edus.tokens", ".sbnds"))
+        path_pbnds = os.path.join(path_root, filename.replace(".edus.tokens", ".pbnds"))
+        path_nary_sexp = os.path.join(path_root, filename.replace(".edus.tokens", ".labeled.nary.ctree"))
+        path_bin_sexp = os.path.join(path_root, filename.replace(".edus.tokens", ".labeled.bin.ctree"))
+        path_arcs = os.path.join(path_root, filename.replace(".edus.tokens", ".arcs"))
+
         # EDUs
         edus = utils.read_lines(path_edus, process=lambda line: line.split())
         if with_root:
             edus = [["<root>"]] + edus
         batch_edus.append(edus)
+
         # EDU IDs
         edu_ids = np.arange(len(edus)).tolist()
         batch_edu_ids.append(edu_ids)
-        # EDUs (Syntactic features; POSTAG)
+
+        # EDUs (POS tags)
         edus_postag = utils.read_lines(path_edus_postag, process=lambda line: line.split())
         if with_root:
             edus_postag = [["<root>"]] + edus_postag
         batch_edus_postag.append(edus_postag)
-        # EDUs (Syntactic features; HEAD)
+
+        # EDUs (head)
         edus_head = utils.read_lines(path_edus_head, process=lambda line: tuple(line.split()))
         if with_root:
             edus_head = [("<root>", "<root>", "<root>")] + edus_head
         batch_edus_head.append(edus_head)
+
         # Sentence boundaries
         sbnds = utils.read_lines(path_sbnds, process=lambda line: tuple([int(x) for x in line.split()]))
         batch_sbnds.append(sbnds)
+
         # Paragraph boundaries
         pbnds = utils.read_lines(path_pbnds, process=lambda line: tuple([int(x) for x in line.split()]))
         batch_pbnds.append(pbnds)
+
         # Constituent tree
         nary_sexp = utils.read_lines(path_nary_sexp, process=lambda line: line.split())[0]
         bin_sexp = utils.read_lines(path_bin_sexp, process=lambda line: line.split())[0]
@@ -81,6 +90,7 @@ def read_rstdt(split, relation_level, with_root=False):
             bin_sexp = treetk.tree2sexp(bin_tree)
         batch_nary_sexp.append(nary_sexp)
         batch_bin_sexp.append(bin_sexp)
+
         # Dependency tree
         hyphens = utils.read_lines(path_arcs, process=lambda line: line.split())
         assert len(hyphens) == 1
@@ -89,6 +99,7 @@ def read_rstdt(split, relation_level, with_root=False):
         if relation_level == "coarse-grained":
             arcs = [(h,d,relation_mapper.f2c(l)) for h,d,l in arcs]
         batch_arcs.append(arcs)
+
     assert len(batch_edu_ids) \
             == len(batch_edus) \
             == len(batch_edus_postag) \
@@ -123,14 +134,27 @@ def read_rstdt(split, relation_level, with_root=False):
                         batch_bin_sexp=batch_bin_sexp,
                         batch_arcs=batch_arcs)
 
-    total_edus = 0
+    n_docs = len(databatch)
+
+    n_paras = 0
+    for pbnds in batch_pbnds:
+        n_paras += len(pbnds)
+
+    n_sents = 0
+    for sbnds in batch_sbnds:
+        n_sents += len(sbnds)
+
+    n_edus = 0
     for edus in batch_edus:
         if with_root:
-            total_edus += len(edus[1:]) # Exclude the ROOT
+            n_edus += len(edus[1:]) # Exclude the ROOT
         else:
-            total_edus += len(edus)
+            n_edus += len(edus)
+
     utils.writelog("split=%s" % split)
-    utils.writelog("# of instances=%d" % len(databatch))
-    utils.writelog("# of EDUs (w/o ROOTs)=%d" % total_edus)
+    utils.writelog("# of documents=%d" % n_docs)
+    utils.writelog("# of paragraphs=%d" % n_paras)
+    utils.writelog("# of sentences=%d" % n_sents)
+    utils.writelog("# of EDUs (w/o ROOTs)=%d" % n_edus)
     return databatch
 

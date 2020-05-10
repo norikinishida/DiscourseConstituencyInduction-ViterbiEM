@@ -1,6 +1,5 @@
 # Unsupervised Discourse Constituency Parsing Using Viterbi EM
 
-
 - Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, 2020).
 
 - Task: Unsupervised discourse constituency parsing based on Rhetorical Structure Theory
@@ -10,12 +9,11 @@
 ## Requirements ##
 
 - numpy
+- spacy >= 2.1.9
 - chainer >= 6.1.0
 - multiset
 - jsonlines
 - pyprind
-- [Stanford Tokenizer](https://nlp.stanford.edu/static/software/tokenizer.shtml)
-- [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/index.html)
 
 ## Configuration ##
 
@@ -55,10 +53,8 @@ $ pip install gensim
 $ pip install nltk
 $ git clone https://github.com/norikinishida/utils.git
 $ git clone https://github.com/norikinishida/treetk.git
-$ git clone https://github.com/norikinishida/textpreprocessor.git
 $ cp -r ./utils/utils ..
 $ cp -r ./treetk/treetk ..
-$ cp -r ./textpreprocessor/textpreprocessor ..
 ```
 
 ## Preprocessing ##
@@ -70,9 +66,11 @@ $ cp -r ./textpreprocessor/textpreprocessor ..
 ```
 
 - The following directories will be generated:
-    - ./data/rstdt/renamed (preprocessed data of RST-DT)
-    - ./data/rstdt-vocab (vocabularies and class names)
-    - ./data/ptbwsj_wo_rstdt (preprocessed data of PTB-WSJ)
+    - ./data/rstdt/wsj/{train,test} (preprocessed RST-DT)
+    - ./data/ptbwsj_wo_rstdt (preprocessed PTB-WSJ)
+    - ./data/rstdt-vocab (vocabularies)
+
+- NOTE: We rewrote this part from scratch using spaCy to make the codes much simpler than the previous ones. (2020/05/11)
 
 ## Parsing Model: Span-based Model ##
 

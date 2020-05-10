@@ -11,7 +11,7 @@ def read_ptbwsj_wo_rstdt(with_root):
     """
     config = utils.Config()
 
-    path_root = os.path.join(config.getpath("data"), "ptbwsj_wo_rstdt", "preprocessed")
+    path_root = os.path.join(config.getpath("data"), "ptbwsj_wo_rstdt")
 
     # Reading
     batch_edu_ids = []
@@ -20,41 +20,49 @@ def read_ptbwsj_wo_rstdt(with_root):
     batch_edus_head = []
     batch_sbnds = []
     batch_pbnds = []
-    filenames = os.listdir(os.path.join(config.getpath("data"), "ptbwsj_wo_rstdt", "preprocessed"))
-    filenames = [n for n in filenames if n.endswith(".paragraph.boundaries")]
-    filenames = [n.replace(".paragraph.boundaries", ".edus") for n in filenames]
+
+    filenames = os.listdir(path_root)
+    filenames = [n for n in filenames if n.endswith(".edus.tokens")]
     filenames.sort()
+
     for filename in filenames:
         # Path
         path_edus = os.path.join(path_root, filename + ".preprocessed")
-        path_edus_postag = os.path.join(path_root, filename + ".postags")
-        path_edus_head = os.path.join(path_root, filename + ".heads")
-        path_sbnds = os.path.join(path_root, filename.replace(".edus", ".sentence.proj.boundaries"))
-        path_pbnds = os.path.join(path_root, filename.replace(".edus", ".paragraph.boundaries"))
+        path_edus_postag = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.postags"))
+        path_edus_head = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.heads"))
+        path_sbnds = os.path.join(path_root, filename.replace(".edus.tokens", ".sbnds"))
+        path_pbnds = os.path.join(path_root, filename.replace(".edus.tokens", ".pbnds"))
+
         # EDUs
         edus = utils.read_lines(path_edus, process=lambda line: line.split())
         if with_root:
             edus = [["<root>"]] + edus
         batch_edus.append(edus)
+
         # EDU IDs
         edu_ids = np.arange(len(edus)).tolist()
         batch_edu_ids.append(edu_ids)
-        # EDUs (Syntactic features; POSTAG)
+
+        # EDUs (POS tags)
         edus_postag = utils.read_lines(path_edus_postag, process=lambda line: line.split())
         if with_root:
             edus_postag = [["<root>"]] + edus_postag
         batch_edus_postag.append(edus_postag)
-        # EDUs (Syntactic features; HEAD)
+
+        # EDUs (head)
         edus_head = utils.read_lines(path_edus_head, process=lambda line: tuple(line.split()))
         if with_root:
             edus_head = [("<root>", "<root>", "<root>")] + edus_head
         batch_edus_head.append(edus_head)
+
         # Sentence boundaries
         sbnds = utils.read_lines(path_sbnds, process=lambda line: tuple([int(x) for x in line.split()]))
         batch_sbnds.append(sbnds)
+
         # Paragraph boundaries
         pbnds = utils.read_lines(path_pbnds, process=lambda line: tuple([int(x) for x in line.split()]))
         batch_pbnds.append(pbnds)
+
     assert len(batch_edu_ids) \
             == len(batch_edus) \
             == len(batch_edus_postag) \
@@ -79,13 +87,26 @@ def read_ptbwsj_wo_rstdt(with_root):
                         batch_sbnds=batch_sbnds,
                         batch_pbnds=batch_pbnds)
 
-    total_edus = 0
+    n_docs = len(databatch)
+
+    n_paras = 0
+    for pbnds in batch_pbnds:
+        n_paras += len(pbnds)
+
+    n_sents = 0
+    for sbnds in batch_sbnds:
+        n_sents += len(sbnds)
+
+    n_edus = 0
     for edus in batch_edus:
         if with_root:
-            total_edus += len(edus[1:]) # Exclude the ROOT
+            n_edus += len(edus[1:]) # Exclude the ROOT
         else:
-            total_edus += len(edus)
-    utils.writelog("# of instances=%d" % len(databatch))
-    utils.writelog("# of EDUs (w/o ROOTs)=%d" % total_edus)
+            n_edus += len(edus)
+
+    utils.writelog("# of documents=%d" % n_docs)
+    utils.writelog("# of paragraphs=%d" % n_paras)
+    utils.writelog("# of sentences=%d" % n_sents)
+    utils.writelog("# of EDUs (w/o ROOTs)=%d" % n_edus)
     return databatch
 
