@@ -101,7 +101,7 @@ $ cp -r ./treetk/treetk ..
 - Run the following command:
 
 ```
-python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB --config ./config/hyperparams_2.ini --name trial1 --actiontype train --max_epoch 10
+python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB --config ./config/hyperparams_2.ini --name trial1 --actiontype train --max_epoch 15
 ```
 
 - The following files will be generated:

@@ -6,7 +6,7 @@ INITIAL_TREE_SAMPLING=RB2_RB_LB
 CONFIG=./config/hyperparams_2.ini
 NAME=trial1
 
-MAX_EPOCH=10
+MAX_EPOCH=15
 python main.py \
     --gpu ${GPU} \
     --model ${MODEL} \
