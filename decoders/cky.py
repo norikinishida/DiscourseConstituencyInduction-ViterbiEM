@@ -309,8 +309,7 @@ class CKYDecoder(object):
         :type i3: int
         :rtype: float
         """
-        # C = 10.0
-        C = 5.0
+        C = 10.0
         n_edus = float(i3 - i1 + 1)
         locality_bias = C * (1.0 / n_edus)
         return locality_bias
