@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-STORAGE=/mnt/hdd/projects/discourse/PreprocessedRSTDT/data
+STORAGE=/mnt/hdd/projects/discourse/DiscourseConstituencyInduction-ViterbiEM/data
 
 # Step 1 (RST-DT): wsj_xxxx.edus.tokens, wsj_xxx.*.*.ctree
 python ./preprocessing/prepare_rstdt.py

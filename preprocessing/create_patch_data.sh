@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-STORAGE=/mnt/hdd/projects/discourse/PreprocessedRSTDT/data
+STORAGE=/mnt/hdd/projects/discourse/DiscourseConstituencyInduction-ViterbiEM/data
 
 mkdir ./patch_data
 mkdir ./patch_data/train
