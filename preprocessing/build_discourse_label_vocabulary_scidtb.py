@@ -44,12 +44,12 @@ def main():
             fc.write("%s\n" % coarse_relations)
 
     utils.build_vocabulary(paths_file=[tmp_f_path],
-                           path_vocab=os.path.join(config.getpath("data"), "scidtb-vocab", "relations.coarse.vocab.txt"),
+                           path_vocab=os.path.join(config.getpath("data"), "scidtb-vocab", "relations.fine.vocab.txt"),
                            prune_at=50000,
                            min_count=-1,
                            special_words=["<root>"])
     utils.build_vocabulary(paths_file=[tmp_c_path],
-                           path_vocab=os.path.join(config.getpath("data"), "scidtb-vocab", "relations.fine.vocab.txt"),
+                           path_vocab=os.path.join(config.getpath("data"), "scidtb-vocab", "relations.coarse.vocab.txt"),
                            prune_at=50000,
                            min_count=-1,
                            special_words=["<root>"])
