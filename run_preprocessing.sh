@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-STORAGE=/mnt/hdd/projects/discourse/PreprocessedDiscourseTreebanks/data
+STORAGE=/mnt/hdd/projects/discourse/DiscourseConstituencyInduction-ViterbiEM/data
 
 ################################
 # RST-DT, PTB-WSJ
