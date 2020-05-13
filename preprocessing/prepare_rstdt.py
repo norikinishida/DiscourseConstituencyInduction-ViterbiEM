@@ -39,7 +39,7 @@ def process(path_in, path_out):
             for line in open(os.path.join(path_in, filename)):
                 line = line.strip()
                 if line == "":
-                    sentence = ""
+                    tokens = ""
                 else:
                     doc = nlp(line)
                     tokens = [token.text for token in doc]
