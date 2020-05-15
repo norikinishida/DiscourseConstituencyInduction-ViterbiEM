@@ -10,9 +10,9 @@ class NegativeTreeSampler(object):
         self.sampler_ponly = TreeSampler(["X", "BU", "BU"])
         self.sampler_sp = TreeSampler(["BU", "BU", "BU"])
 
-    def sample(self, sexps, sbnds, pbnds):
+    def sample(self, inputs, sbnds, pbnds):
         """
-        :type sexps: list of int
+        :type inputs: list of int
         :type sbnds: list of (int, int)
         :type pbnds: list of (int, int)
         :rtype: list of str
@@ -21,28 +21,28 @@ class NegativeTreeSampler(object):
                                     p=[0.4, 0.6, 0.0, 0.0])
         if selected == "no":
             sexp = self.sampler_no.sample(
-                                sexps=sexps,
+                                inputs=inputs,
                                 edus=None,
                                 edus_head=None,
                                 sbnds=sbnds,
                                 pbnds=pbnds)
         elif selected == "sonly":
             sexp = self.sampler_sonly.sample(
-                                sexps=sexps,
+                                inputs=inputs,
                                 edus=None,
                                 edus_head=None,
                                 sbnds=sbnds,
                                 pbnds=pbnds)
         elif selected == "ponly":
             sexp = self.sampler_ponly.sample(
-                                sexps=sexps,
+                                inputs=inputs,
                                 edus=None,
                                 edus_head=None,
                                 sbnds=sbnds,
                                 pbnds=pbnds)
         else:
             sexp = self.sampler_sp.sample(
-                                sexps=sexps,
+                                inputs=inputs,
                                 edus=None,
                                 edus_head=None,
                                 sbnds=sbnds,

@@ -17,8 +17,6 @@ def main(args):
     no_ssplit = args.no_ssplit
     with_gold_edus = args.with_gold_edus
 
-    config = utils.Config()
-
     nlp = spacy.load("en_core_web_sm", disable=["ner", "textcat"])
     nlp.tokenizer = nlp.tokenizer.tokens_from_list
 
