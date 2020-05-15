@@ -9,9 +9,9 @@ import treetk
 
 class TemplateFeatureExtractor(TemplateFeatureExtractor):
 
-    def __init__(self, databatch):
+    def __init__(self, dataset):
         """
-        :type databatch: DataBatch
+        :type dataset: numpy.ndarray
         """
         super().__init__()
         self.LENGTH_TOKENS_SPANS = [(1,2), (3,5), (6,10), (11,20), (21,np.inf)]
@@ -19,14 +19,14 @@ class TemplateFeatureExtractor(TemplateFeatureExtractor):
         self.LENGTH_SENTS_SPANS = [(0,0), (1,1), (2,2), (3,5), (6,np.inf)]
         self.LENGTH_PARAS_SPANS = [(0,0), (1,1), (2,2), (3,5), (6,np.inf)]
         self.DISTANCE_SPANS = [(0,0), (1,2), (3,5), (6,np.inf)]
-        self.aggregate_templates(databatch=databatch)
+        self.aggregate_templates(dataset=dataset)
         self.prepare()
 
     ############################
-    def build_ngrams(self, batch_edus, batch_nary_sexp, threshold):
+    def build_ngrams(self, dataset, attr_name, threshold):
         """
-        :type batch_edus: list of list of list of str
-        :type batch_nary_sexp: list of list of str
+        :type dataset: numpy.ndarray
+        :type attr_name: str
         :type threshold: int
         :rtype: list of (str, int), list of (str, int), list of (str, int), list of (str, int), list of (str, int), list of (str, int)
         """
@@ -37,8 +37,9 @@ class TemplateFeatureExtractor(TemplateFeatureExtractor):
         counter_lc_end = Counter()
         counter_rc_begin = Counter()
         counter_rc_end = Counter()
-        prog_bar = pyprind.ProgBar(len(batch_edus))
-        for edus, sexp in zip(batch_edus, batch_nary_sexp):
+        for data in pyprind.prog_bar(dataset):
+            edus = getattr(data, attr_name)
+            sexp = data.nary_sexp
             ngrams_span_begin = []
             ngrams_span_end = []
             ngrams_lc_begin = []
@@ -75,7 +76,6 @@ class TemplateFeatureExtractor(TemplateFeatureExtractor):
             counter_lc_end.update(ngrams_lc_end)
             counter_rc_begin.update(ngrams_rc_begin)
             counter_rc_end.update(ngrams_rc_end)
-            prog_bar.update()
 
         # Filtering
         counter_span_begin = [(ngram,cnt) for ngram,cnt in counter_span_begin.most_common() if cnt >= threshold]
@@ -110,23 +110,23 @@ class TemplateFeatureExtractor(TemplateFeatureExtractor):
     ############################
 
     ############################
-    def aggregate_templates(self, databatch):
+    def aggregate_templates(self, dataset):
         """
-        :type databatch: DataBatch
+        :type dataset: numpy.ndarray
         :rtype: None
         """
         ###################
         # lex_ngrams_span_begin, lex_ngrams_span_end,\
         #     lex_ngrams_lc_begin, lex_ngrams_lc_end,\
         #     lex_ngrams_rc_begin, lex_ngrams_rc_end \
-        #             = self.build_ngrams(batch_edus=databatch.batch_edus,
-        #                                 batch_nary_sexp=databatch.batch_nary_sexp,
+        #             = self.build_ngrams(dataset=dataset,
+        #                                 attr_name="edus",
         #                                 threshold=5)
         # pos_ngrams_span_begin, pos_ngrams_span_end,\
         #     pos_ngrams_lc_begin, pos_ngrams_lc_end,\
         #     pos_ngrams_rc_begin, pos_ngrams_rc_end \
-        #             = self.build_ngrams(batch_edus=databatch.batch_edus_postag,
-        #                                 batch_nary_sexp=databatch.batch_nary_sexp,
+        #             = self.build_ngrams(dataset=dataset,
+        #                                 attr_name="edus_postag",
         #                                 threshold=5)
         ###################
 

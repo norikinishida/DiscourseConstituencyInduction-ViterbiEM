@@ -3,20 +3,21 @@ import treetk
 import dataloader
 
 def main():
-    databatch = dataloader.read_rstdt(split="train", relation_level="coarse-grained", with_root=True)
+    dataset = dataloader.read_rstdt(split="train", relation_level="coarse-grained", with_root=True)
 
     relation_mapper = treetk.rstdt.RelationMapper()
     i = 0
-    for edu_ids, edus, edus_postag, edus_head, sbnds, pbnds, nary_sexp, bin_sexp, arcs \
-            in zip(databatch.batch_edu_ids,
-                   databatch.batch_edus,
-                   databatch.batch_edus_postag,
-                   databatch.batch_edus_head,
-                   databatch.batch_sbnds,
-                   databatch.batch_pbnds,
-                   databatch.batch_nary_sexp,
-                   databatch.batch_bin_sexp,
-                   databatch.batch_arcs):
+    for data in dataset:
+        edu_ids = data.edu_ids
+        edus = data.edus
+        edus_postag = data.edus_postag
+        edus_head = data.edus_head
+        sbnds = data.sbnds
+        pbnds = data.pbnds
+        nary_sexp = data.nary_sexp
+        bin_sexp = data.bin_sexp
+        arcs = data.arcs
+
         print("Data instance #%d" % i)
         print("\t Paragraph #0")
         print("\t\t Sentence #0")

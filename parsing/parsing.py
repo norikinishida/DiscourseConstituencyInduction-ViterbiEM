@@ -2,24 +2,23 @@ import pyprind
 
 import treetk
 
-def parse(model, decoder, databatch, path_pred):
+def parse(model, decoder, dataset, path_pred):
     """
     :type model: Model
     :type decoder: IncrementalCKYDecoder
-    :type databatch: DataBatch
+    :type dataset: numpy.ndarray
     :type path_pred: str
     :rtype: None
     """
     with open(path_pred, "w") as f:
-        prog_bar = pyprind.ProgBar(len(databatch))
 
-        for edu_ids, edus, edus_postag, edus_head, sbnds, pbnds \
-                in zip(databatch.batch_edu_ids,
-                       databatch.batch_edus,
-                       databatch.batch_edus_postag,
-                       databatch.batch_edus_head,
-                       databatch.batch_sbnds,
-                       databatch.batch_pbnds):
+        for data in pyprind.prog_bar(dataset):
+            edu_ids = data.edu_ids
+            edus = data.edus
+            edus_postag = data.edus_postag
+            edus_head = data.edus_head
+            sbnds = data.sbnds
+            pbnds = data.pbnds
 
             # Feature extraction
             edu_vectors = model.forward_edus(edus, edus_postag, edus_head) # (n_edus, bilstm_dim)
@@ -49,6 +48,4 @@ def parse(model, decoder, databatch, path_pred):
             labeled_sexp = treetk.tree2sexp(labeled_tree)
 
             f.write("%s\n" % " ".join(labeled_sexp))
-
-            prog_bar.update()
 

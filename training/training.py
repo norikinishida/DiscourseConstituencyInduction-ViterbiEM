@@ -23,8 +23,8 @@ import metrics
 #           weight_decay,
 #           gradient_clipping,
 #           optimizer_name,
-#           train_databatch,
-#           dev_databatch,
+#           train_dataset,
+#           dev_dataset,
 #           path_train,
 #           path_valid,
 #           path_snapshot,
@@ -41,8 +41,8 @@ import metrics
 #     :type weight_decay: float
 #     :type gradient_clipping: float
 #     :type optimizer_name: str
-#     :type train_databatch: DataBatch
-#     :type dev_databatch: DataBatch
+#     :type train_dataset: numpy.ndarray
+#     :type dev_dataset: numpy.ndarray
 #     :type path_train: str
 #     :type path_valid: str
 #     :type path_snapshot: str
@@ -51,7 +51,7 @@ import metrics
 #     :rtype: None
 #     """
 #     writer_train = jsonlines.Writer(open(path_train, "w"), flush=True)
-#     if dev_databatch is not None:
+#     if dev_dataset is not None:
 #         writer_valid = jsonlines.Writer(open(path_valid, "w"), flush=True)
 #
 #     boundary_flags = [(True,False)]
@@ -63,23 +63,25 @@ import metrics
 #         opt = optimizers.Adam()
 #     else:
 #         raise ValueError("Invalid optimizer_name=%s" % optimizer_name)
+#
 #     opt.setup(model)
+#
 #     if weight_decay > 0.0:
 #         opt.add_hook(chainer.optimizer.WeightDecay(weight_decay))
 #     if gradient_clipping:
 #         opt.add_hook(chainer.optimizer.GradientClipping(gradient_clipping))
 #
-#     n_train = len(train_databatch)
+#     n_train = len(train_dataset)
 #     it = 0
 #     bestscore_holder = utils.BestScoreHolder(scale=100.0)
 #     bestscore_holder.init()
 #
-#     if dev_databatch is not None:
+#     if dev_dataset is not None:
 #         # Initial validation
 #         with chainer.using_config("train", False), chainer.no_backprop_mode():
 #             parsing.parse(model=model,
 #                           decoder=decoder,
-#                           databatch=dev_databatch,
+#                           dataset=dev_dataset,
 #                           path_pred=path_pred)
 #             scores = metrics.rst_parseval(
 #                         pred_path=path_pred,
@@ -113,30 +115,27 @@ import metrics
 #         utils.writelog("Saved the model to %s" % path_snapshot)
 #
 #     for epoch in range(1, max_epoch+1):
+#
 #         perm = np.random.permutation(n_train)
+#
 #         for inst_i in range(0, n_train, batch_size):
-#             # Processing one mini-batch
+#
+#             ### Mini batch
 #
 #             # Init
 #             loss_constituency, acc_constituency = 0.0, 0.0
 #             actual_batchsize = 0
 #
-#             # Mini-batch preparation
-#             batch_edu_ids = train_databatch.batch_edu_ids[perm[inst_i:inst_i+batch_size]]
-#             batch_edus = train_databatch.batch_edus[perm[inst_i:inst_i+batch_size]]
-#             batch_edus_postag = train_databatch.batch_edus_postag[perm[inst_i:inst_i+batch_size]]
-#             batch_edus_head = train_databatch.batch_edus_head[perm[inst_i:inst_i+batch_size]]
-#             batch_sbnds = train_databatch.batch_sbnds[perm[inst_i:inst_i+batch_size]]
-#             batch_pbnds = train_databatch.batch_pbnds[perm[inst_i:inst_i+batch_size]]
+#             for data in train_dataset[perm[inst_i:inst_i+batch_size]]:
 #
-#             for edu_ids, edus, edus_postag, edus_head, sbnds, pbnds \
-#                     in zip(batch_edu_ids,
-#                            batch_edus,
-#                            batch_edus_postag,
-#                            batch_edus_head,
-#                            batch_sbnds,
-#                            batch_pbnds):
-#                 # Processing one instance
+#                 ### One data instance
+#
+#                 edu_ids = data.edu_ids
+#                 edus = data.edus
+#                 edus_postag = data.edus_postag
+#                 edus_head = data.edus_head
+#                 sbnds = data.sbnds
+#                 pbnds = data.pbnds
 #
 #                 # Feature extraction
 #                 edu_vectors = model.forward_edus(edus, edus_postag, edus_head) # (n_edus, bilstm_dim)
@@ -257,12 +256,12 @@ import metrics
 #             utils.writelog(utils.pretty_format_dict(out))
 #             print(bestscore_holder.best_score * 100.0)
 #
-#         if dev_databatch is not None:
+#         if dev_dataset is not None:
 #             # Validation
 #             with chainer.using_config("train", False), chainer.no_backprop_mode():
 #                 parsing.parse(model=model,
 #                               decoder=decoder,
-#                               databatch=dev_databatch,
+#                               dataset=dev_dataset,
 #                               path_pred=path_pred)
 #                 scores = metrics.rst_parseval(
 #                             pred_path=path_pred,
@@ -295,7 +294,7 @@ import metrics
 #             if bestscore_holder.ask_finishing(max_patience=10):
 #                 utils.writelog("Patience %d is over. Training finished successfully." % bestscore_holder.patience)
 #                 writer_train.close()
-#                 if dev_databatch is not None:
+#                 if dev_dataset is not None:
 #                     writer_valid.close()
 #                 return
 #         else:
@@ -314,8 +313,8 @@ def train(model,
           weight_decay,
           gradient_clipping,
           optimizer_name,
-          train_databatch,
-          dev_databatch,
+          train_dataset,
+          dev_dataset,
           path_train,
           path_valid,
           path_snapshot,
@@ -332,8 +331,8 @@ def train(model,
     :type weight_decay: float
     :type gradient_clipping: float
     :type optimizer_name: str
-    :type train_databatch: DataBatch
-    :type dev_databatch: DataBatch
+    :type train_dataset: numpy.ndarray
+    :type dev_dataset: numpy.ndarray
     :type path_train: str
     :type path_valid: str
     :type path_snapshot: str
@@ -342,7 +341,7 @@ def train(model,
     :rtype: None
     """
     writer_train = jsonlines.Writer(open(path_train, "w"), flush=True)
-    if dev_databatch is not None:
+    if dev_dataset is not None:
         writer_valid = jsonlines.Writer(open(path_valid, "w"), flush=True)
 
     boundary_flags = [(True,False)]
@@ -354,23 +353,25 @@ def train(model,
         opt = optimizers.Adam()
     else:
         raise ValueError("Invalid optimizer_name=%s" % optimizer_name)
+
     opt.setup(model)
+
     if weight_decay > 0.0:
         opt.add_hook(chainer.optimizer.WeightDecay(weight_decay))
     if gradient_clipping:
         opt.add_hook(chainer.optimizer.GradientClipping(gradient_clipping))
 
-    n_train = len(train_databatch)
+    n_train = len(train_dataset)
     it = 0
     bestscore_holder = utils.BestScoreHolder(scale=100.0)
     bestscore_holder.init()
 
-    if dev_databatch is not None:
+    if dev_dataset is not None:
         # Initial validation
         with chainer.using_config("train", False), chainer.no_backprop_mode():
             parsing.parse(model=model,
                           decoder=decoder,
-                          databatch=dev_databatch,
+                          dataset=dev_dataset,
                           path_pred=path_pred)
             scores = metrics.rst_parseval(
                         pred_path=path_pred,
@@ -404,31 +405,28 @@ def train(model,
         utils.writelog("Saved the model to %s" % path_snapshot)
 
     for epoch in range(1, max_epoch+1):
+
         perm = np.random.permutation(n_train)
 
         ########## E-Step (BEGIN) ##########
         utils.writelog("E step ===>")
-        all_pos_spans = []
+
         prog_bar = pyprind.ProgBar(n_train)
+
         for inst_i in range(0, n_train, batch_size):
-            # Processing one mini-batch
 
-            # Mini-batch preparation
-            batch_edu_ids = train_databatch.batch_edu_ids[perm[inst_i:inst_i+batch_size]]
-            batch_edus = train_databatch.batch_edus[perm[inst_i:inst_i+batch_size]]
-            batch_edus_postag = train_databatch.batch_edus_postag[perm[inst_i:inst_i+batch_size]]
-            batch_edus_head = train_databatch.batch_edus_head[perm[inst_i:inst_i+batch_size]]
-            batch_sbnds = train_databatch.batch_sbnds[perm[inst_i:inst_i+batch_size]]
-            batch_pbnds = train_databatch.batch_pbnds[perm[inst_i:inst_i+batch_size]]
+            ### Mini batch
 
-            for edu_ids, edus, edus_postag, edus_head, sbnds, pbnds \
-                    in zip(batch_edu_ids,
-                           batch_edus,
-                           batch_edus_postag,
-                           batch_edus_head,
-                           batch_sbnds,
-                           batch_pbnds):
-                # Processing one instance
+            for data in train_dataset[inst_i:inst_i+batch_size]:
+
+                ### One data instance
+
+                edu_ids = data.edu_ids
+                edus = data.edus
+                edus_postag = data.edus_postag
+                edus_head = data.edus_head
+                sbnds = data.sbnds
+                pbnds = data.pbnds
 
                 with chainer.using_config("train", False), chainer.no_backprop_mode():
 
@@ -461,38 +459,32 @@ def train(model,
                     pos_tree = treetk.sexp2tree(pos_sexp, with_nonterminal_labels=False, with_terminal_labels=False)
                     pos_tree.calc_spans()
                     pos_spans = treetk.aggregate_spans(pos_tree, include_terminal=False, order="post-order") # list of (int, int)
-                    all_pos_spans.append(pos_spans)
+                    data.pos_spans = pos_spans  #NOTE
                     prog_bar.update()
-        all_pos_spans = np.asarray(all_pos_spans, dtype="O")
         ########## E-Step (END) ##########
 
         ########## M-Step (BEGIN) ##########
         utils.writelog("M step ===>")
+
         for inst_i in range(0, n_train, batch_size):
+
             # Processing one mini-batch
 
             # Init
             loss_constituency, acc_constituency = 0.0, 0.0
             actual_batchsize = 0
 
-            # Mini-batch preparation
-            batch_edu_ids = train_databatch.batch_edu_ids[perm[inst_i:inst_i+batch_size]]
-            batch_edus = train_databatch.batch_edus[perm[inst_i:inst_i+batch_size]]
-            batch_edus_postag = train_databatch.batch_edus_postag[perm[inst_i:inst_i+batch_size]]
-            batch_edus_head = train_databatch.batch_edus_head[perm[inst_i:inst_i+batch_size]]
-            batch_sbnds = train_databatch.batch_sbnds[perm[inst_i:inst_i+batch_size]]
-            batch_pbnds = train_databatch.batch_pbnds[perm[inst_i:inst_i+batch_size]]
-            batch_pos_spans = all_pos_spans[inst_i:inst_i+batch_size] # NOTE: Do not permutate indices
+            for data in train_dataset[perm[inst_i:inst_i+batch_size]]:
 
-            for edu_ids, edus, edus_postag, edus_head, sbnds, pbnds, pos_spans \
-                    in zip(batch_edu_ids,
-                           batch_edus,
-                           batch_edus_postag,
-                           batch_edus_head,
-                           batch_sbnds,
-                           batch_pbnds,
-                           batch_pos_spans):
                 # Processing one instance
+
+                edu_ids = data.edu_ids
+                edus = data.edus
+                edus_postag = data.edus_postag
+                edus_head = data.edus_head
+                sbnds = data.sbnds
+                pbnds = data.pbnds
+                pos_spans = data.pos_spans # NOTE
 
                 # Feature extraction
                 edu_vectors = model.forward_edus(edus, edus_postag, edus_head) # (n_edus, bilstm_dim)
@@ -504,7 +496,7 @@ def train(model,
                 margins = []
                 pos_neg_spans.append(pos_spans)
                 with chainer.using_config("train", False), chainer.no_backprop_mode():
-                    for use_sbnds,use_pbnds in boundary_flags:
+                    for use_sbnds, use_pbnds in boundary_flags:
                         neg_bin_sexp = decoder.decode(
                                             model=model,
                                             sexps=edu_ids,
@@ -581,12 +573,12 @@ def train(model,
             print(bestscore_holder.best_score * 100.0)
         ########## M-Step (END) ##########
 
-        if dev_databatch is not None:
+        if dev_dataset is not None:
             # Validation
             with chainer.using_config("train", False), chainer.no_backprop_mode():
                 parsing.parse(model=model,
                               decoder=decoder,
-                              databatch=dev_databatch,
+                              dataset=dev_dataset,
                               path_pred=path_pred)
                 scores = metrics.rst_parseval(
                             pred_path=path_pred,
@@ -619,7 +611,7 @@ def train(model,
             if bestscore_holder.ask_finishing(max_patience=10):
                 utils.writelog("Patience %d is over. Training finished successfully." % bestscore_holder.patience)
                 writer_train.close()
-                if dev_databatch is not None:
+                if dev_dataset is not None:
                     writer_valid.close()
                 return
         else:

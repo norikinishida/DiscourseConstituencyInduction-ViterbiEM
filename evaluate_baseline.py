@@ -69,7 +69,7 @@ def main(args):
     # Data preparation
     begin_time = time.time()
 
-    test_databatch = dataloader.read_rstdt("test", relation_level="coarse-grained", with_root=False)
+    test_dataset = dataloader.read_rstdt("test", relation_level="coarse-grained", with_root=False)
 
     end_time = time.time()
     utils.writelog("Loaded the corpus. %f [sec.]" % (end_time - begin_time))
@@ -80,7 +80,7 @@ def main(args):
 
     with chainer.using_config("train", False), chainer.no_backprop_mode():
         parse(sampler=sampler,
-              databatch=test_databatch,
+              dataset=test_dataset,
               path_pred=path_pred)
         scores = metrics.rst_parseval(
                     pred_path=path_pred,
@@ -106,23 +106,21 @@ def main(args):
 
     utils.writelog("Done.")
 
-def parse(sampler, databatch, path_pred):
+def parse(sampler, dataset, path_pred):
     """
     :type sampler: TreeSampler
-    :type databatch: DataBatch
+    :type dataset: numpy.ndarray
     :type path_pred: str
     :rtype: None
     """
     with open(path_pred, "w") as f:
-        prog_bar = pyprind.ProgBar(len(databatch))
 
-        for edu_ids, edus, edus_postag, edus_head, sbnds, pbnds \
-                in zip(databatch.batch_edu_ids,
-                       databatch.batch_edus,
-                       databatch.batch_edus_postag,
-                       databatch.batch_edus_head,
-                       databatch.batch_sbnds,
-                       databatch.batch_pbnds):
+        for data in pyprind.prog_bar(dataset):
+            edu_ids = data.edu_ids
+            edus = data.edus
+            edus_head = data.edus_head
+            sbnds = data.sbnds
+            pbnds = data.pbnds
 
             # Tree sampling (constituency)
             unlabeled_sexp = sampler.sample(
@@ -141,8 +139,6 @@ def parse(sampler, databatch, path_pred):
             labeled_sexp = treetk.tree2sexp(labeled_tree)
 
             f.write("%s\n" % " ".join(labeled_sexp))
-
-            prog_bar.update()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

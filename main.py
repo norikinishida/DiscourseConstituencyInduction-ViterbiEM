@@ -101,17 +101,17 @@ def main(args):
     # Data preparation
     begin_time = time.time()
 
-    train_databatch = dataloader.read_rstdt("train", relation_level="coarse-grained", with_root=False)
-    test_databatch = dataloader.read_rstdt("test", relation_level="coarse-grained", with_root=False)
+    train_dataset = dataloader.read_rstdt("train", relation_level="coarse-grained", with_root=False)
+    test_dataset = dataloader.read_rstdt("test", relation_level="coarse-grained", with_root=False)
     vocab_word = utils.read_vocab(os.path.join(config.getpath("data"), "rstdt-vocab", "words.vocab.txt"))
     vocab_postag = utils.read_vocab(os.path.join(config.getpath("data"), "rstdt-vocab", "postags.vocab.txt"))
     vocab_deprel = utils.read_vocab(os.path.join(config.getpath("data"), "rstdt-vocab", "deprels.vocab.txt"))
 
     if data_augmentation:
-        external_train_databatch = dataloader.read_ptbwsj_wo_rstdt(with_root=False)
+        external_train_dataset= dataloader.read_ptbwsj_wo_rstdt(with_root=False)
         # Remove documents with only one leaf node
-        filtering_function = lambda d,i: len(d.batch_edu_ids[i]) == 1
-        external_train_databatch = utils.filter_databatch(external_train_databatch, filtering_function)
+        filtering_function = lambda x: len(x.edu_ids) == 1
+        external_train_dataset = utils.filter_dataset(external_train_dataset, filtering_function)
 
     end_time = time.time()
     utils.writelog("Loaded the corpus. %f [sec.]" % (end_time - begin_time))
@@ -164,7 +164,7 @@ def main(args):
     if model_name == "spanbasedmodel":
         # Span-based model w/ template features
         template_feature_extractor = models.TemplateFeatureExtractor(
-                                                databatch=train_databatch)
+                                                dataset=train_dataset)
         utils.writelog("Template feature size=%d" % template_feature_extractor.feature_size)
         if actiontype == "train":
             for template in template_feature_extractor.templates:
@@ -218,20 +218,17 @@ def main(args):
         with chainer.using_config("train", True):
             if dev_size > 0:
                 # Training with cross validation
-                train_databatch, dev_databatch = dataloader.randomsplit(
-                                                        n_dev=dev_size,
-                                                        databatch=train_databatch)
+                train_dataset, dev_dataset = utils.split_dataset(dataset=train_dataset, n_dev=dev_size, seed=None)
                 with open(os.path.join(config.getpath("results"), basename + ".valid_gold.ctrees"), "w") as f:
-                    for sexp in dev_databatch.batch_nary_sexp:
-                        f.write("%s\n" % " ".join(sexp))
+                    for data in dev_dataset:
+                        f.write("%s\n" % " ".join(data.nary_sexp))
             else:
                 # Training with the full training set
-                dev_databatch = None
+                dev_dataset = None
 
             if data_augmentation:
-                train_databatch = utils.concat_databatch(
-                                            train_databatch,
-                                            external_train_databatch)
+                train_dataset = np.concatenate([train_dataset, external_train_dataset], axis=0)
+
             training.train(
                 model=model,
                 decoder=decoder,
@@ -243,8 +240,8 @@ def main(args):
                 weight_decay=weight_decay,
                 gradient_clipping=gradient_clipping,
                 optimizer_name=optimizer_name,
-                train_databatch=train_databatch,
-                dev_databatch=dev_databatch,
+                train_dataset=train_dataset,
+                dev_dataset=dev_dataset,
                 path_train=path_train,
                 path_valid=path_valid,
                 path_snapshot=path_snapshot,
@@ -256,7 +253,7 @@ def main(args):
             # Test
             parsing.parse(model=model,
                           decoder=decoder,
-                          databatch=test_databatch,
+                          dataset=test_dataset,
                           path_pred=path_pred)
             scores = metrics.rst_parseval(
                         pred_path=path_pred,
