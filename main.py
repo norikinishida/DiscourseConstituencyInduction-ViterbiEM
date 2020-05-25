@@ -113,8 +113,7 @@ def main(args):
     if data_augmentation:
         external_train_dataset= dataloader.read_ptbwsj_wo_rstdt(with_root=False)
         # Remove documents with only one leaf node
-        filtering_function = lambda x: len(x.edu_ids) == 1
-        external_train_dataset = utils.filter_dataset(external_train_dataset, filtering_function)
+        external_train_dataset = utils.filter_dataset(external_train_dataset, condition=lambda data: len(data.edu_ids) > 1)
 
     end_time = time.time()
     utils.writelog("Loaded the corpus. %f [sec.]" % (end_time - begin_time))
@@ -559,7 +558,6 @@ def train(model,
                    "Ranking Accuracy": acc_bracketing_data * 100.0}
             writer_train.write(out)
             utils.writelog(utils.pretty_format_dict(out))
-            print(bestscore_holder.best_score * 100.0)
         ########## M-Step (END) ##########
 
         if dev_dataset is not None:
