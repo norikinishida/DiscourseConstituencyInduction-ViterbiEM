@@ -45,8 +45,8 @@ def main(args):
         # Paragraphs: List[List[List[str]]]
         lines = utils.read_lines(os.path.join(path, filename), process=lambda line: line.split())
         paras = []
-        para = [lines[0]]
-        for i in range(1, len(lines)):
+        para = []
+        for i in range(len(lines)):
             line = lines[i]
             if len(line) == 0 and len(para) == 0:
                 continue
@@ -60,6 +60,7 @@ def main(args):
 
         # Split lines in paragraphs into sentences
         # Constraint: All the ending positions of sentences must match with those of gold EDUs
+
         paras_tokens = []
         paras_postags = []
         tok_i = 0

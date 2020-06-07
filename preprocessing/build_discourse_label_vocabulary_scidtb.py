@@ -47,12 +47,14 @@ def main():
                            path_vocab=os.path.join(config.getpath("data"), "scidtb-vocab", "relations.fine.vocab.txt"),
                            prune_at=50000,
                            min_count=-1,
-                           special_words=["<root>"])
+                           special_words=["<root>"],
+                           with_unk=False)
     utils.build_vocabulary(paths_file=[tmp_c_path],
                            path_vocab=os.path.join(config.getpath("data"), "scidtb-vocab", "relations.coarse.vocab.txt"),
                            prune_at=50000,
                            min_count=-1,
-                           special_words=["<root>"])
+                           special_words=["<root>"],
+                           with_unk=False)
 
 
 if __name__ == "__main__":

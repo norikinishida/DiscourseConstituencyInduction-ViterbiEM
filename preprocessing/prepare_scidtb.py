@@ -152,9 +152,6 @@ def process(path_in, path_out):
 
     print("Processed %d files; %d files are skipped." % (len(filenames) - skip_count, skip_count))
 
-def process_othersplit(path_in, path_out):
-    utils.mkdir(path_out)
-
 def main():
     config = utils.Config()
 
