@@ -14,13 +14,11 @@ def main(args):
     filenames.sort()
 
     for filename in pyprind.prog_bar(filenames):
-        # EDUs (sub-arcs, tokens, POS tags)
+        # dependency sub-arcs for each EDU
         edus_arcs = utils.read_lines(os.path.join(path, filename), process=lambda line: line.split())
-        edus_tokens = utils.read_lines(os.path.join(path, filename.replace(".edus.arcs", ".edus.tokens")), process=lambda line: line.split())
-        edus_postags = utils.read_lines(os.path.join(path, filename.replace(".edus.arcs", ".edus.postags")), process=lambda line: line.split())
 
         heads = []
-        for tokens, postags, arcs in zip(edus_tokens, edus_postags, edus_arcs):
+        for arcs in edus_arcs:
             arcs = treetk.hyphens2arcs(arcs)
 
             # Check: Arcs should be arranged in ascending order wrt dependent
@@ -47,16 +45,12 @@ def main(args):
                         head_idx = idx
                         break
 
-            # Head token, POS tag, and dependency relation
-            head_token = tokens[head_idx]
-            head_postag = postags[head_idx]
-            head_deprel = arcs[head_idx][2]
-            heads.append((head_token, head_postag, head_deprel))
+            heads.append(head_idx)
 
         # Write
         with open(os.path.join(path, filename.replace(".edus.arcs", ".edus.heads")), "w") as f:
-            for token, postag, deprel in heads:
-                f.write("%s %s %s\n" % (token, postag, deprel))
+            for head_idx in heads:
+                f.write("%d\n" % head_idx)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

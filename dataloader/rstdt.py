@@ -34,6 +34,7 @@ def read_rstdt(split, relation_level, with_root=False):
         # Path
         path_edus = os.path.join(path_root, filename + ".preprocessed")
         path_edus_postag = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.postags"))
+        path_edus_deprel = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.deprels"))
         path_edus_head = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.heads"))
         path_sbnds = os.path.join(path_root, filename.replace(".edus.tokens", ".sbnds"))
         path_pbnds = os.path.join(path_root, filename.replace(".edus.tokens", ".pbnds"))
@@ -59,8 +60,15 @@ def read_rstdt(split, relation_level, with_root=False):
             edus_postag = [["<root>"]] + edus_postag
         kargs["edus_postag"] = edus_postag
 
+        # EDUs (dependency relations)
+        edus_deprel = utils.read_lines(path_edus_deprel, process=lambda line: line.split())
+        if with_root:
+            edus_deprel = [["<root>"]] + edus_deprel
+        kargs["edus_deprel"] = edus_deprel
+
         # EDUs (head)
-        edus_head = utils.read_lines(path_edus_head, process=lambda line: tuple(line.split()))
+        edus_head = utils.read_lines(path_edus_head, process=lambda line: int(line))
+        edus_head = [(edus[1+edu_i][head_i], edus_postag[1+edu_i][head_i], edus_deprel[1+edu_i][head_i]) for edu_i, head_i in enumerate(edus_head)]
         if with_root:
             edus_head = [("<root>", "<root>", "<root>")] + edus_head
         kargs["edus_head"] = edus_head
@@ -96,16 +104,6 @@ def read_rstdt(split, relation_level, with_root=False):
         kargs["arcs"] = arcs
 
         # DataInstance
-        # data = utils.DataInstance(
-        #                 edus=edus,
-        #                 edu_ids=edu_ids,
-        #                 edus_postag=edus_postag,
-        #                 edus_head=edus_head,
-        #                 sbnds=sbnds,
-        #                 pbnds=pbnds,
-        #                 nary_sexp=nary_sexp,
-        #                 bin_sexp=bin_sexp,
-        #                 arcs=arcs)
         data = utils.DataInstance(**kargs)
         dataset.append(data)
 
