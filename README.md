@@ -110,7 +110,7 @@ python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB
 If you use the code in research publications, please cite:
 
 ```
-@article{nishida2018unsupervised,
+@article{nishida2020unsupervised,
     author={Nishida, Noriki and Nakayama, Hideki},
     title={Unsupervised Discourse Constituency Parsing Using Viterbi EM},
     journal={Transactions of the Association for Computational Linguistics},
