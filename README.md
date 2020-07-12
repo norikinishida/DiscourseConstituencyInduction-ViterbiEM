@@ -1,12 +1,20 @@
-# Unsupervised Discourse Constituency Parsing Using Viterbi EM
+# DiscourseConstituencyInduction-ViterbiEM
 
-- Source codes used in our TACL paper, "Unsupervised Discourse Constituency Parsing Using Viterbi EM" (Nishida and Nakayama, 2020).
+(c) 2020 Noriki Nishida
 
-- Task: Unsupervised discourse constituency parsing based on Rhetorical Structure Theory
-    - Input: EDUs, syntactic features, sentence/paragraph boundaries
-    - Output: Unlabeled RST-style constituent tree
+This is an implementation of an unsupervised discourse constituency parser described in the paper:
 
-## Requirements ##
+> Noriki Nishida and Hideki Nakayama. 2020. [Unsupervised Discourse Constituency Parsing Using Viterbi EM](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00312). Transactions of the Assocication for Computational Linguistics, vol.8, pp.215-230.
+
+## Task Definition ##
+
+- Unsupervised discourse constituency parsing based on Rhetorical Structure Theory
+- Input: EDUs, syntactic features, sentence/paragraph boundaries
+- Output: Unlabeled RST-style constituent tree
+
+## Setup ##
+
+### Requirements
 
 - numpy
 - spacy >= 2.1.9
@@ -15,9 +23,7 @@
 - jsonlines
 - pyprind
 
-## Configuration ##
-
-1. Clone this repository and create directories to store preprocessed data and outputs
+### Clone this repository and create directories to store preprocessed data and outputs
 
 ```
 $ git clone https://github.com/norikinishida/DiscourseConstituencyInduction-ViterbiEM
@@ -26,13 +32,13 @@ $ mkdir ./data
 $ mkdir ./results
 ```
 
-2. Edit ```./run_preprocessing.sh``` as follows:
+### Edit ```./run_preprocessing.sh``` as follows:
 
 ```shell
 STORAGE=./data
 ```
 
-3. Edit ```./config/path.ini``` as follows:
+### Edit ```./config/path.ini``` as follows:
 
 ```INI
 data = "./data"
@@ -42,7 +48,7 @@ rstdt = "/path/to/rst_discourse_treebank/data/RSTtrees-WSJ-main-1.0"
 ptbwsj = "/path/to/LDC99T42/treebank_3/raw/wsj"
 ```
 
-4. Clone other libraries
+### Clone other libraries
 
 ```
 $ mkdir ./tmp
@@ -125,4 +131,22 @@ python main.py --gpu 0 --model spanbasedmodel2 --initial_tree_sampling RB2_RB_LB
 - The following files will be generated:
     - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.evaluation.ctrees
     - ./results/spanbasedmodel2.RB2_RB_LB.hyperparams_2.aug_False.trial1.evaluation.json
+
+## Citation ##
+
+If you use the code in research publications, please cite:
+
+```
+@article{nishida2018unsupervised,
+    author={Nishida, Noriki and Nakayama, Hideki},
+    title={Unsupervised Discourse Constituency Parsing Using Viterbi EM},
+    journal={Transactions of the Assocication for Computational Linguistics},
+    volume={8},
+    number={},
+    pages={215-230},
+    year={2020},
+    doi={10.1162/tacl\_a\_00312},
+    URL={https://doi.org/10.1162/tacl_a_00312},
+}
+```
 
