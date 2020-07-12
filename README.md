@@ -4,7 +4,7 @@
 
 This is an implementation of an unsupervised discourse constituency parser described in the paper:
 
-> Noriki Nishida and Hideki Nakayama. 2020. [Unsupervised Discourse Constituency Parsing Using Viterbi EM](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00312). Transactions of the Assocication for Computational Linguistics, vol.8, pp.215-230.
+> Noriki Nishida and Hideki Nakayama. 2020. [Unsupervised Discourse Constituency Parsing Using Viterbi EM](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00312). Transactions of the Association for Computational Linguistics, vol.8, pp.215-230.
 
 ## Task Definition ##
 
@@ -140,7 +140,7 @@ If you use the code in research publications, please cite:
 @article{nishida2018unsupervised,
     author={Nishida, Noriki and Nakayama, Hideki},
     title={Unsupervised Discourse Constituency Parsing Using Viterbi EM},
-    journal={Transactions of the Assocication for Computational Linguistics},
+    journal={Transactions of the Association for Computational Linguistics},
     volume={8},
     number={},
     pages={215-230},
