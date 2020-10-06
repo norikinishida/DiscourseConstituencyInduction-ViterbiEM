@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+import pyprind
 
 import utils
 
@@ -20,7 +21,7 @@ def read_ptbwsj_wo_rstdt(with_root=False):
     filenames = [n for n in filenames if n.endswith(".edus.tokens")]
     filenames.sort()
 
-    for filename in filenames:
+    for filename in pyprind.prog_bar(filenames):
         # Path
         path_edus = os.path.join(path_root, filename + ".preprocessed")
         path_edus_postag = os.path.join(path_root, filename.replace(".edus.tokens", ".edus.postags"))
@@ -55,7 +56,11 @@ def read_ptbwsj_wo_rstdt(with_root=False):
 
         # EDUs (head)
         edus_head = utils.read_lines(path_edus_head, process=lambda line: int(line))
-        edus_head = [(edus[1+edu_i][head_i], edus_postag[1+edu_i][head_i], edus_deprel[1+edu_i][head_i]) for edu_i, head_i in enumerate(edus_head)]
+        if with_root:
+            offset = 1
+        else:
+            offset = 0
+        edus_head = [(edus[offset+edu_i][head_i], edus_postag[offset+edu_i][head_i], edus_deprel[offset+edu_i][head_i]) for edu_i, head_i in enumerate(edus_head)]
         if with_root:
             edus_head = [("<root>", "<root>", "<root>")] + edus_head
         kargs["edus_head"] = edus_head
